@@ -1,9 +1,16 @@
+let generated_flashcards = null
+let deck_id = null
+let subject_id = null
+
 document.getElementById("flashcard-form").addEventListener("submit", async function(event) {
     event.preventDefault(); // Prevents form submission and page reload
 
     // Get input values
     const topic = document.getElementById("topic").value.trim();
     const amount = document.getElementById("amount").value.trim();
+    const exam_board = document.getElementById("exam_board").value.trim() || "";
+    
+    // alert(exam_board)
 
     console.log("Topic:", topic);
     console.log("Number of flashcards:", amount);
@@ -16,15 +23,18 @@ document.getElementById("flashcard-form").addEventListener("submit", async funct
             },
             body: JSON.stringify({
                 topic,
+                exam_board,
                 amount
             })
         });
 
         const responseData = await response.json();
-        const flashcards = JSON.parse(responseData.flashcards); // Fix here ✅
+        const flashcards = responseData.flashcards; // Use the flashcards data directly
+        generated_flashcards = flashcards
 
         if (response.ok) {
             console.log("Generated flashcards:", flashcards);
+            addGeneratedFlashcardsToDeck(deck_id, subject_id, flashcards)
             displayFlashcards(flashcards);
         } else {
             console.error("Error from API:", responseData);
@@ -34,6 +44,44 @@ document.getElementById("flashcard-form").addEventListener("submit", async funct
     }
 });
 
+async function addGeneratedFlashcardsToDeck(deck_id, subject_id, flashcards) {
+    const access_token = localStorage.getItem("token");
+
+    if (!access_token) {
+        console.error("No access token found. Please log in.");
+        return;
+    }
+
+    // Transform flashcards into the correct format
+    const formattedFlashcards = flashcards.map(([question, answer]) => ({
+        question,
+        answer
+    }));
+
+    try {
+        const response = await fetch(`http://127.0.0.1:5000/add-generated-flashcards-to-deck/${deck_id}`, {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+                "Authorization": `Bearer ${access_token}`
+            },
+            body: JSON.stringify({
+                flashcards: formattedFlashcards,
+                subject_id
+            })
+        });
+
+        const responseData = await response.json();
+
+        if (response.ok) {
+            alert(responseData.message);
+        } else {
+            console.error("Error:", responseData);
+        }
+    } catch (error) {
+        console.error("Error adding flashcards to deck:", error);
+    }
+}
 
 
 function displayFlashcards(flashcards) {
@@ -69,5 +117,152 @@ function displayFlashcards(flashcards) {
 
     flashcardContainer.appendChild(flashcardDeck);
 }
+function showAlertModal(message) {
+    // Set the message in the modal
+    document.getElementById('alertMessage').innerText = message;
 
+    // Show the modal
+    const alertModal = new bootstrap.Modal(document.getElementById('alertModal'));
+    alertModal.show();
 
+    // Listen for the modal's hidden event
+    document.getElementById('alertModal').addEventListener('hidden.bs.modal', function () {
+        // Redirect to the home page
+        window.location.href = "/home";
+    });
+}
+
+// Example usage
+document.addEventListener("DOMContentLoaded", async function () {
+    const access_token = localStorage.getItem("token");
+
+    if (!access_token) {
+        // If the user is not logged in, redirect to the login page
+        window.location.href = "/login";
+        return;
+    }
+
+    try {
+        // Call the backend to check if decks exist
+        const response = await fetch("/check-deck-exists", {
+            method: "GET",
+            headers: {
+                "Authorization": `Bearer ${access_token}`
+            }
+        });
+
+        if (!response.ok) {
+            const errorData = await response.json();
+            console.error("Server error:", errorData);
+            throw new Error(`HTTP error! Status: ${response.status}`);
+        }
+
+        const responseData = await response.json();
+
+        if (!responseData.decks_exist) {
+            // If no decks exist, show the alert modal
+            showAlertModal("No decks found. Please create a deck first.");
+        }
+    } catch (error) {
+        console.error("Error checking decks:", error);
+        alert("An error occurred while checking decks. Please try again.");
+    }
+
+    try {
+        // Fetch the user's decks
+        const response = await fetch("/fetch-all-decks", {
+            method: "GET",
+            headers: {
+                "Authorization": `Bearer ${access_token}`
+            }
+        });
+
+        if (!response.ok) {
+            const errorData = await response.json();
+            console.error("Server error:", errorData);
+            throw new Error(`HTTP error! Status: ${response.status}`);
+        }
+
+        const responseData = await response.json();
+        const decks = responseData.decks;
+
+        console.log(decks);
+
+        if (!decks || decks.length === 0) {
+            // If no decks exist, show the alert modal
+            showAlertModal("No decks found. Please create a deck first.");
+            return;
+        }
+
+        // Populate the deck dropdown
+        const deckSelect = document.getElementById("deck");
+        const deckSubjectName = document.getElementById("deck-subject-name");
+
+        decks.forEach(deck => {
+            const option = document.createElement("option");
+            option.value = deck.id; // Use the deck ID as the value
+            option.textContent = deck.name; // Use the deck name as the display text
+            deckSelect.appendChild(option);
+        });
+
+        // Update the subject when a deck is selected
+        deckSelect.addEventListener("change", async function () {
+            const selectedDeck = decks.find(deck => deck.id === parseInt(this.value));
+
+            if (selectedDeck) {
+                // Use await to get the resolved subject name
+                const subjectName = await getSubjectName(selectedDeck.subject_id);
+                deck_id = selectedDeck.id
+                subject_id = selectedDeck.subject_id
+                deckSubjectName.textContent = subjectName || "No subject";
+            } else {
+                deckSubjectName.textContent = "Loading...";
+            }
+        });
+
+        // Trigger the change event to update the subject for the first deck
+        deckSelect.dispatchEvent(new Event("change"));
+
+        // Manually handle the first deck's subject
+        const firstDeck = decks[0];
+        if (firstDeck) {
+            const subjectName = await getSubjectName(firstDeck.subject_id);
+            deckSubjectName.textContent = subjectName || "No subject";
+        }
+    } catch (error) {
+        console.error("Error fetching decks:", error);
+        alert("An error occurred while fetching decks. Please try again.");
+    }
+});
+
+async function getSubjectName(subject_id) {
+    const access_token = localStorage.getItem("token");
+
+    if (!access_token) {
+        // If the user is not logged in, redirect to the login page
+        window.location.href = "/login";
+        return;
+    }
+
+    try {
+        // Fetch the subject name
+        const response = await fetch(`/get-subject-name/${subject_id}`, {
+            method: "GET",
+            headers: {
+                "Authorization": `Bearer ${access_token}`
+            }
+        });
+
+        if (!response.ok) {
+            const errorData = await response.json();
+            console.error("Server error:", errorData);
+            throw new Error(`HTTP error! Status: ${response.status}`);
+        }
+
+        const responseData = await response.json();
+        return responseData.subject_name;
+    } catch (error) {
+        console.error("Error fetching subject name:", error);
+        return "Error fetching subject";
+    }
+}
