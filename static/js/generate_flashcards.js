@@ -74,7 +74,7 @@ async function addGeneratedFlashcardsToDeck(deck_id, subject_id, flashcards) {
         const responseData = await response.json();
 
         if (response.ok) {
-            alert(responseData.message);
+            // alert(responseData.message);
         } else {
             console.error("Error:", responseData);
         }
@@ -165,7 +165,7 @@ document.addEventListener("DOMContentLoaded", async function () {
         }
     } catch (error) {
         console.error("Error checking decks:", error);
-        alert("An error occurred while checking decks. Please try again.");
+        // alert("An error occurred while checking decks. Please try again.");
     }
 
     try {
@@ -231,7 +231,7 @@ document.addEventListener("DOMContentLoaded", async function () {
         }
     } catch (error) {
         console.error("Error fetching decks:", error);
-        alert("An error occurred while fetching decks. Please try again.");
+        // alert("An error occurred while fetching decks. Please try again.");
     }
 });
 

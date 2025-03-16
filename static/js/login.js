@@ -25,9 +25,21 @@ document.getElementById("login-form").addEventListener("submit", async function(
             window.location.href = "/home"
         } else {
             console.error("Error:", responseData);
+            showAlertModal(responseData.message)
         }
     } catch (error) {
         console.error("Error signing in:", error);
+        showAlertModal(error)
     }
 });
 
+
+
+function showAlertModal(message) {
+    // Set the message in the modal
+    document.getElementById('alertMessage').innerText = message;
+
+    // Show the modal
+    const alertModal = new bootstrap.Modal(document.getElementById('alertModal'));
+    alertModal.show();
+}

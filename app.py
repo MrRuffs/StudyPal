@@ -13,6 +13,8 @@ import random
 
 load_dotenv()
 
+
+
 app = Flask(__name__)
 CORS(app)  # Allow frontend requests
 app.secret_key = os.getenv("SECRET_KEY")  # Replace with a real secret key
