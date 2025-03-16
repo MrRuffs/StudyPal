@@ -152,7 +152,7 @@
 
         //     // Send the flashcard to the API
         //     try {
-        //         const response = await fetch("/create-flashcard-api", {
+        //         const response = await fetch("http://0.0.0.0:10000/create-flashcard-api", {
         //             method: "POST",
         //             headers: {
         //                 "Content-Type": "application/json",
@@ -202,7 +202,7 @@
             const access_token = localStorage.getItem("token")
 
             try {
-                const response = await fetch("/add-flashcard", {
+                const response = await fetch("http://0.0.0.0:10000/add-flashcard", {
                     method: "POST",
                     headers: {
                         "Content-Type": "application/json",
@@ -236,7 +236,7 @@
             const token = localStorage.getItem("token");
 
             try {
-                const response = await fetch("/create-flashcards-from-text", {
+                const response = await fetch("http://0.0.0.0:10000/create-flashcards-from-text", {
                     method: "POST",
                     headers: {
                         "Content-Type": "application/json",

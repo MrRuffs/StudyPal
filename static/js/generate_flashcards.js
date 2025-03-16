@@ -16,7 +16,7 @@ document.getElementById("flashcard-form").addEventListener("submit", async funct
     console.log("Number of flashcards:", amount);
 
     try {
-        const response = await fetch("/generate-flashcards", {
+        const response = await fetch("http://0.0.0.0:10000/generate-flashcards", {
             method: "POST",
             headers: {
                 "Content-Type": "application/json"
@@ -59,7 +59,7 @@ async function addGeneratedFlashcardsToDeck(deck_id, subject_id, flashcards) {
     }));
 
     try {
-        const response = await fetch(`/add-generated-flashcards-to-deck/${deck_id}`, {
+        const response = await fetch(`http://0.0.0.0:10000/add-generated-flashcards-to-deck/${deck_id}`, {
             method: "POST",
             headers: {
                 "Content-Type": "application/json",
@@ -144,7 +144,7 @@ document.addEventListener("DOMContentLoaded", async function () {
 
     try {
         // Call the backend to check if decks exist
-        const response = await fetch("/check-deck-exists", {
+        const response = await fetch("http://0.0.0.0:10000/check-deck-exists", {
             method: "GET",
             headers: {
                 "Authorization": `Bearer ${access_token}`
@@ -170,7 +170,7 @@ document.addEventListener("DOMContentLoaded", async function () {
 
     try {
         // Fetch the user's decks
-        const response = await fetch("/fetch-all-decks", {
+        const response = await fetch("http://0.0.0.0:10000/fetch-all-decks", {
             method: "GET",
             headers: {
                 "Authorization": `Bearer ${access_token}`
@@ -246,7 +246,7 @@ async function getSubjectName(subject_id) {
 
     try {
         // Fetch the subject name
-        const response = await fetch(`/get-subject-name/${subject_id}`, {
+        const response = await fetch(`http://0.0.0.0:10000/get-subject-name/${subject_id}`, {
             method: "GET",
             headers: {
                 "Authorization": `Bearer ${access_token}`

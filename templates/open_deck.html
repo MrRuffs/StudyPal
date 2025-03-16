@@ -153,7 +153,7 @@
         async function fetch_deck_name(deck_id) {
             const access_token = localStorage.getItem("token");
             try {
-                const response = await fetch(`/fetch-deck-name/${deck_id}`, {
+                const response = await fetch(`http://0.0.0.0:10000//fetch-deck-name/${deck_id}`, {
                     method: "GET",
                     headers: {
                         "Authorization": `Bearer ${access_token}`
@@ -175,7 +175,7 @@
         async function fetchFlashcards(deck_id) {
             const access_token = localStorage.getItem("token");
             try {
-                const response = await fetch(`/fetch-flashcards/${deck_id}`, {
+                const response = await fetch(`http://0.0.0.0:10000/fetch-flashcards/${deck_id}`, {
                     method: "GET",
                     headers: {
                         "Authorization": `Bearer ${access_token}`
@@ -273,7 +273,7 @@
             }
 
             try {
-                const response = await fetch(`/reset-deck-status/${deck_id}`, {
+                const response = await fetch(`http://0.0.0.0:10000//reset-deck-status/${deck_id}`, {
                     method: "POST",
                     headers: {
                         "Authorization": `Bearer ${access_token}`,
