@@ -26,7 +26,7 @@ document.addEventListener("DOMContentLoaded", function () {
 // Function to fetch and display the username
 async function fetchUsername() {
     try {
-        const response = await fetch("http://127.0.0.1:5000/get-username", {
+        const response = await fetch("/get-username", {
             method: "GET",
             headers: {
                 "Authorization": `Bearer ${localStorage.getItem("token")}`
@@ -51,7 +51,7 @@ async function fetchUsername() {
 async function fetchSubjects() {
     const access_token = localStorage.getItem("token");
     try {
-        const response = await fetch("http://127.0.0.1:5000/get-subjects", {
+        const response = await fetch("/get-subjects", {
             method: "GET",
             headers: {
                 "Authorization": `Bearer ${access_token}`
@@ -135,7 +135,7 @@ async function openViewDecksModal(subjectId, subjectName) {
 async function fetchDecks(subjectId) {
     const access_token = localStorage.getItem("token");
     try {
-        const response = await fetch(`http://127.0.0.1:5000/get-decks?subject_id=${subjectId}`, {
+        const response = await fetch(`/get-decks?subject_id=${subjectId}`, {
             method: "GET",
             headers: {
                 "Authorization": `Bearer ${access_token}`
@@ -169,7 +169,7 @@ document.getElementById("createDeckFormInModal").addEventListener("submit", asyn
     }
 
     try {
-        const response = await fetch("http://127.0.0.1:5000/create-deck-api", {
+        const response = await fetch("/create-deck-api", {
             method: "POST",
             headers: {
                 "Authorization": `Bearer ${localStorage.getItem("token")}`,
@@ -230,7 +230,7 @@ document.getElementById("confirmDeleteButton").addEventListener("click", async f
 // Function to delete a subject
 async function deleteSubject(subjectId) {
     try {
-        const response = await fetch("http://127.0.0.1:5000/delete-subject-api", {
+        const response = await fetch("/delete-subject-api", {
             method: "DELETE",
             headers: {
                 "Authorization": `Bearer ${localStorage.getItem("token")}`,
@@ -258,7 +258,7 @@ async function deleteSubject(subjectId) {
 // Function to delete a deck
 async function deleteDeck(deckId) {
     try {
-        const response = await fetch("http://127.0.0.1:5000/delete-deck-api", {
+        const response = await fetch("/delete-deck-api", {
             method: "DELETE",
             headers: {
                 "Authorization": `Bearer ${localStorage.getItem("token")}`,
@@ -295,7 +295,7 @@ document.getElementById("createSubjectForm").addEventListener("submit", async fu
     const subjectName = document.getElementById("subjectName").value;
 
     try {
-        const response = await fetch("http://127.0.0.1:5000/create-subject-api", {
+        const response = await fetch("/create-subject-api", {
             method: "POST",
             headers: {
                 "Authorization": `Bearer ${access_token}`,

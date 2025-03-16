@@ -16,7 +16,7 @@ document.getElementById("flashcard-form").addEventListener("submit", async funct
     console.log("Number of flashcards:", amount);
 
     try {
-        const response = await fetch("http://127.0.0.1:5000/generate-flashcards", {
+        const response = await fetch("/generate-flashcards", {
             method: "POST",
             headers: {
                 "Content-Type": "application/json"
@@ -59,7 +59,7 @@ async function addGeneratedFlashcardsToDeck(deck_id, subject_id, flashcards) {
     }));
 
     try {
-        const response = await fetch(`http://127.0.0.1:5000/add-generated-flashcards-to-deck/${deck_id}`, {
+        const response = await fetch(`/add-generated-flashcards-to-deck/${deck_id}`, {
             method: "POST",
             headers: {
                 "Content-Type": "application/json",
